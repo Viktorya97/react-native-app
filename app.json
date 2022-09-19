@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "react-native-app",
+    "name": "React Native App",
     "slug": "react-native-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -28,6 +28,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "1febf6bb-1854-4156-b64f-736a0a4a7289"
+      }
     }
   }
 }
