@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import {
     KeyboardAvoidingView,
+    TouchableOpacity,
+    ScrollView,
     StyleSheet,
     TextInput,
-    TouchableOpacity,
+    Keyboard,
     View,
-    Text,
-    ScrollView,
-    Keyboard
+    Text
 } from 'react-native';
+import { validateEmail, validatePassword } from '../utils/globalFunctions';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../firebase';
-import { validateEmail, validatePassword } from '../utils/globalFunctions';
 
 const Login = () => {
     const [email, setEmail] = useState('');
@@ -31,7 +31,7 @@ const Login = () => {
         })
     }, [])
 
-    const onPressLogin = () => {
+    const onPressLogin = async () => {
         const validEmail = validateEmail(email)
         const validPass = validatePassword(password)
 
@@ -42,31 +42,29 @@ const Login = () => {
         setPasswordValid(validPass.isValid)
 
         if (emailValid && passwordValid) {
-            auth
-                .signInWithEmailAndPassword(email, password)
-                .then(userCredentials => {
-                    const user = userCredentials.user;
-                    console.log('Logged in with: ', user.email);
-                })
-                .catch(error => {
-                    if (error.code === 'auth/invalid-email') {
-                        setEmailError('The email address is not valid.')
-                    }
+            try {
+                const userCredentials = await auth.signInWithEmailAndPassword(email, password)
+                const user = await userCredentials.user;
+                console.log('Logged in with: ', user.email);
+            } catch (error) {
+                if (error.code === 'auth/invalid-email') {
+                    setEmailError('The email address is not valid.')
+                }
 
-                    if (error.code === 'auth/user-disabled') {
-                        setEmailError('The user corresponding to the given email has been disabled.')
-                    }
+                if (error.code === 'auth/user-disabled') {
+                    setEmailError('The user corresponding to the given email has been disabled.')
+                }
 
-                    if (error.code === 'auth/user-not-found') {
-                        setEmailError('There is no user corresponding to the given email.')
-                    }
+                if (error.code === 'auth/user-not-found') {
+                    setEmailError('There is no user corresponding to the given email.')
+                }
 
-                    if (error.code === 'auth/wrong-password') {
-                        setPasswordError('The password is invalid for the given email.')
-                    }
+                if (error.code === 'auth/wrong-password') {
+                    setPasswordError('The password is invalid for the given email.')
+                }
 
-                    console.log('error: ', error.message);
-                })
+                console.log('error: ', error.message);
+            }
         }
     }
 
@@ -74,11 +72,7 @@ const Login = () => {
         <View style={styles.mainBody}>
             <ScrollView
                 keyboardShouldPersistTaps='handled'
-                contentContainerStyle={{
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignContent: 'center',
-                }}>
+                contentContainerStyle={styles.containerContent}>
                 <View>
                     <KeyboardAvoidingView enabled>
                         <View style={styles.sectionStyle}>
@@ -110,18 +104,22 @@ const Login = () => {
                                 returnKeyType='next'
                             />
                         </View>
+
                         {emailError.length > 0 &&
-                        <Text style={styles.errorTextStyle}>{emailError}</Text>
+                            <Text style={styles.errorTextStyle}>{emailError}</Text>
                         }
                         {passwordError.length > 0 &&
-                        <Text style={styles.errorTextStyle}>{passwordError}</Text>
+                            <Text style={styles.errorTextStyle}>{passwordError}</Text>
                         }
+
                         <TouchableOpacity
                             style={styles.buttonStyle}
                             activeOpacity={0.5}
-                            onPress={onPressLogin}>
+                            onPress={onPressLogin}
+                        >
                             <Text style={styles.buttonTextStyle}>LOGIN</Text>
                         </TouchableOpacity>
+
                         <View style={styles.haveAccountBox}>
                             <Text style={styles.haveAccountText}>Don't have an account? </Text>
                             <TouchableOpacity onPress={() => navigation.navigate('Register')}>
@@ -142,6 +140,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         backgroundColor: '#307ecc',
+        alignContent: 'center',
+    },
+    containerContent: {
+        flex: 1,
+        justifyContent: 'center',
         alignContent: 'center',
     },
     sectionStyle: {

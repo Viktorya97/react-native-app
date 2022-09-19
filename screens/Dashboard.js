@@ -6,7 +6,7 @@ import { auth } from '../firebase';
 import Carousel from './Carousel'
 
 const Dashboard = () => {
-    const [images, setImages] = useState();
+    const [images, setImages] = useState([]);
 
     const navigation = useNavigation();
 
@@ -34,33 +34,32 @@ const Dashboard = () => {
         }
     };
 
-    const onPressSignOut = () => {
-        auth
-            .signOut()
-            .then(() => {
-                navigation.navigate('Login')
-            })
-            .catch(error => alert(error.message))
+    const onPressSignOut = async () => {
+        try {
+           await auth.signOut()
+           await navigation.navigate('Login')
+        } catch (error) {
+            console.log('error: ', error.message)
+        }
     }
 
     return (
-        <SafeAreaView style={{flex: 1, backgroundColor: '#FFFFFF'}}>
-                <View style={{flex: 1, padding: 16}}>
+        <SafeAreaView style={styles.areaStyles}>
+                <View style={styles.main}>
                     <View
-                        style={{
-                            flex: 1,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                        }}>
+                        style={styles.carouselBox}>
+
                         <TouchableOpacity
                             activeOpacity={0.5}
                             style={styles.browseButton}
-                            onPress={pickImage}>
+                            onPress={pickImage}
+                        >
                             <Text style={styles.buttonText}>Browse</Text>
                         </TouchableOpacity>
 
                         <Carousel images={images} />
                     </View>
+
                     <TouchableOpacity
                         style={styles.logOutButton}
                         activeOpacity={0.5}
@@ -70,6 +69,7 @@ const Dashboard = () => {
                             Log Out
                         </Text>
                     </TouchableOpacity>
+
                 </View>
             </SafeAreaView>
     )
@@ -78,6 +78,18 @@ const Dashboard = () => {
 export default Dashboard
 
 const styles = StyleSheet.create({
+    areaStyles: {
+        flex: 1, backgroundColor: '#FFFFFF'
+    },
+    main: {
+        flex: 1,
+        padding: 16
+    },
+    carouselBox: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
     logOutButton: {
         backgroundColor: '#a2a6a3',
         borderWidth: 0,

@@ -21,7 +21,7 @@ const Carousel = ({images}) => {
 
     const renderItems = ({item}) => {
         return (
-            <View style={{ width: width - 32 }}>
+            <View style={styles.imageBox}>
                 <Image source={{uri: item}} style={styles.image} />
             </View>
         );
@@ -47,7 +47,7 @@ const Carousel = ({images}) => {
                         <TouchableOpacity
                             key={index.toString()}
                             onPress={() => scrollToIndex(index)}
-                            style={[styles.circle, {backgroundColor: index === currentIndex ? '#274459' : '#a2a6a3'} ]}
+                            style={[styles.circle, {backgroundColor: index === currentIndex ? '#274459' : '#a2a6a3' }]}
                         />
                     )
                 })}
@@ -59,6 +59,9 @@ const Carousel = ({images}) => {
 export default Carousel
 
 const styles = StyleSheet.create({
+    imageBox: {
+        width: width - 32,
+    },
     image: {
         height: 250,
         resizeMode: 'cover',

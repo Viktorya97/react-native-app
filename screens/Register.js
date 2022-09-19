@@ -22,7 +22,7 @@ const Register = () => {
         })
     }, [])
 
-    const onPressSignUp = () => {
+    const onPressSignUp = async () => {
         const validEmail = validateEmail(email)
         const validPass = validatePassword(password)
 
@@ -33,39 +33,33 @@ const Register = () => {
         setPasswordValid(validPass.isValid)
 
         if (emailValid && passwordValid) {
-            auth
-                .createUserWithEmailAndPassword(email, password)
-                .then(userCredentials => {
-                    const user = userCredentials.user;
-                    console.log('Logged in with: ', user.email);
-                })
-                .catch(error => {
-                    if (error.code === 'auth/email-already-in-use') {
-                        setEmailError('This email address is already exists.')
-                    }
+            try {
+                const userCredentials = await auth.createUserWithEmailAndPassword(email, password)
+                const user = await userCredentials.user;
+                console.log('Logged in with: ', user.email);
+            } catch (error) {
+                if (error.code === 'auth/email-already-in-use') {
+                    setEmailError('This email address is already exists.')
+                }
 
-                    if (error.code === 'auth/invalid-email') {
-                        setEmailError('This email address is invalid.')
-                    }
+                if (error.code === 'auth/invalid-email') {
+                    setEmailError('This email address is invalid.')
+                }
 
-                    if (error.code === 'auth/weak-password') {
-                        setEmailError('The password is too weak.');
-                    }
+                if (error.code === 'auth/weak-password') {
+                    setEmailError('The password is too weak.');
+                }
 
-                    console.error('error:', error.message);
-                })
+                console.error('error:', error.message);
+            }
         }
     }
 
     return (
-        <View style={{flex: 1, backgroundColor: '#307ecc'}}>
+        <View style={styles.registerPage}>
             <ScrollView
                 keyboardShouldPersistTaps='handled'
-                contentContainerStyle={{
-                    flex: 1,
-                    justifyContent: 'center',
-                    alignContent: 'center',
-                }}>
+                contentContainerStyle={styles.containerContent}>
                 <KeyboardAvoidingView enabled>
                     <View style={styles.sectionStyle}>
                         <TextInput
@@ -94,18 +88,21 @@ const Register = () => {
                             blurOnSubmit={false}
                         />
                     </View>
+
                     {emailError.length > 0 &&
-                    <Text style={styles.errorTextStyle}>{emailError}</Text>
+                        <Text style={styles.errorTextStyle}>{emailError}</Text>
                     }
                     {passwordError.length > 0 &&
-                    <Text style={styles.errorTextStyle}>{passwordError}</Text>
+                        <Text style={styles.errorTextStyle}>{passwordError}</Text>
                     }
+
                     <TouchableOpacity
                         style={styles.buttonStyle}
                         activeOpacity={0.5}
                         onPress={onPressSignUp}>
                         <Text style={styles.buttonTextStyle}>REGISTER</Text>
                     </TouchableOpacity>
+
                 </KeyboardAvoidingView>
             </ScrollView>
         </View>
@@ -115,6 +112,15 @@ const Register = () => {
 export default Register
 
 const styles = StyleSheet.create({
+    registerPage: {
+        flex: 1,
+        backgroundColor: '#307ecc',
+    },
+    containerContent: {
+        flex: 1,
+        justifyContent: 'center',
+        alignContent: 'center',
+    },
     sectionStyle: {
         flexDirection: 'row',
         height: 40,
