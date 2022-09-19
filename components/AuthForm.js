@@ -103,7 +103,9 @@ const AuthForm = ({callback, type}) => {
                             <View style={styles.haveAccountBox}>
                                 <Text style={styles.haveAccountText}>Don't have an account? </Text>
                                 <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                                    <Text style={styles.registerTextStyle}> Register</Text>
+                                    <Text style={styles.registerTextStyle}>
+                                        Register
+                                    </Text>
                                 </TouchableOpacity>
                             </View>
                         )}
