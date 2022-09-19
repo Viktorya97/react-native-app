@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View, Dimensions, FlatList } from 'react-native';
+
 const viewConfigRef = { viewAreaCoveragePercentThreshold: 95 }
 
 const { width } = Dimensions.get('window');

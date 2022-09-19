@@ -3,6 +3,7 @@ import { StyleSheet, Text, TouchableOpacity, View, SafeAreaView } from 'react-na
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { auth } from '../firebase';
+
 import Carousel from './Carousel'
 
 const Dashboard = () => {
